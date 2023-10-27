@@ -2,9 +2,11 @@ import logging
 import sys
 from flask import Flask
 from views.example import example_bp
+from views.onezone import onezone_bp
 
 app = Flask(__name__, static_url_path='', static_folder="static")
 app.register_blueprint(example_bp)
+app.register_blueprint(onezone_bp)
 
 
 @app.route("/")
