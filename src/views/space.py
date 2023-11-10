@@ -8,10 +8,24 @@ from flask import Blueprint, request
 import onezone_client
 from onezone_client.rest import ApiException
 from pprint import pprint
-
-from urllib3 import HTTPHeaderDict
+from utils import filesystem
 
 space_bp = Blueprint('space', __name__, url_prefix='/space', static_folder="../static")
+
+
+def create_metadata_md(space_name: str, institution_name: str, file_id: str, metadata_path: str) -> str:
+    metadata_section = filesystem.read_file_contents(metadata_path)
+    to_substitute = {
+        "dataset_name": space_name,
+        "institution_name": institution_name,
+        "share_file_id": file_id,
+        "metadata_section": metadata_section
+    }
+    template = filesystem.read_file_contents("data/templates/share_description.md")
+    src = Template("".join(template))
+    result = src.substitute(to_substitute)
+
+    return result
 
 
 @space_bp.route("/", methods=["GET"])
