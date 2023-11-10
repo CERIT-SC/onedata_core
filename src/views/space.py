@@ -151,8 +151,7 @@ def post():
 
     file_id = api_response.file_id
 
-    description = create_metadata_md(parameters["name"], "Masaryk University", file_id,
-                                     os.path.join(parameters["path"] + "/SPA.yml"))
+    description = "Basic description"
 
     api_instance = oneprovider_client.ShareApi(oneprovider_client.ApiClient(oneprovider_configuration))
     body = oneprovider_client.ShareCreateRequest(
@@ -180,6 +179,27 @@ def post():
         print("Exception when calling ShareApi->get_share: %s\n" % e)
 
     share_purl = api_response.public_url
+    share_root_file_id = api_response.root_file_id
+
+    description = create_metadata_md(parameters["name"], "Masaryk University", share_root_file_id,
+                                     os.path.join(parameters["path"] + "/SPA.yml"))
+
+    api_instance = oneprovider_client.ShareApi(oneprovider_client.ApiClient(oneprovider_configuration))
+    body = oneprovider_client.SharesShidBody(description=description)
+
+    try:
+        # Update share
+        api_instance.update_share(body, share_id)
+    except ApiExceptionProvider as e:
+        print("Exception when calling ShareApi->update_share: %s\n" % e)
+
+    api_instance = onepanel_client.StorageImportApi(onepanel_client.ApiClient(onepanel_configuration))
+
+    try:
+        # Force start auto storage import scan
+        api_instance.force_start_auto_storage_import_scan(space_id)
+    except ApiExceptionPanel as e:
+        print("Exception when calling StorageImportApi->force_start_auto_storage_import_scan: %s\n" % e)
 
     response = flask.Response(json.dumps({
         "status": status_code,
