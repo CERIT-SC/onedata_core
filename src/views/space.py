@@ -1,5 +1,4 @@
 from __future__ import print_function
-
 import json
 import os
 import time
@@ -53,7 +52,7 @@ def post():
     oneprovider_configuration.api_key['X-Auth-Token'] = "BLINDED"
 
     parameters: dict = request.json
-    if {"name", "path", "support_size", "share_description"}.symmetric_difference(set(parameters.keys())):
+    if {"name", "path", "support_size"}.symmetric_difference(set(parameters.keys())):
         return "now enough or not allowed parameters"
 
     # create an instance of the API class
