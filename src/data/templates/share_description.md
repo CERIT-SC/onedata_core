@@ -37,4 +37,4 @@ or you can run the download script directly from the repository:
 curl -s https://raw.githubusercontent.com/CERIT-SC/onedata-downloader/master/download.py | python3 - $share_file_id
 ```
 
-Data life cycle of this dataset is managed by fs2od (https://fs2od.readthedocs.io).
+Data life cycle of this dataset is managed by fs2od ([https://fs2od.readthedocs.io](https://fs2od.readthedocs.io)).
