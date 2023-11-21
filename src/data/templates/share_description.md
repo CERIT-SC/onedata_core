@@ -27,14 +27,14 @@ You can run following command to download whole content of the dataset:
 wget https://raw.githubusercontent.com/CERIT-SC/onedata-downloader/master/download.py
 
 # download the dataset to the current folder
-python3 download.py $share_file_id
+python3 download.py -o "$onezone_url" $share_file_id
 
 # help can be obtain by
 python3 download.py --help
 ```
 or you can run the download script directly from the repository:
 ```sh
-curl -s https://raw.githubusercontent.com/CERIT-SC/onedata-downloader/master/download.py | python3 - $share_file_id
+curl -s https://raw.githubusercontent.com/CERIT-SC/onedata-downloader/master/download.py | python3 - -o "$onezone_url" $share_file_id
 ```
 
 Data life cycle of this dataset is managed by fs2od ([https://fs2od.readthedocs.io](https://fs2od.readthedocs.io)).

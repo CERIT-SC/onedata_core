@@ -13,23 +13,33 @@ from onepanel_client.rest import ApiException as ApiExceptionPanel
 from oneprovider_client.rest import ApiException as ApiExceptionProvider
 from pprint import pprint
 from utils import filesystem
+from urllib.parse import urlparse
 
 space_bp = Blueprint('space', __name__, url_prefix='/space', static_folder="../static")
 
 
-def create_metadata_md(space_name: str, institution_name: str, file_id: str, metadata_path: str) -> str:
+def create_metadata_md(space_name: str, institution_name: str, file_id: str, metadata_path: str, onezone_url: str) -> str:
     metadata_section = filesystem.read_file_contents(metadata_path)
     to_substitute = {
         "dataset_name": space_name,
         "institution_name": institution_name,
         "share_file_id": file_id,
-        "metadata_section": metadata_section
+        "metadata_section": metadata_section,
+        "onezone_url": onezone_url
     }
     template = filesystem.read_file_contents("data/templates/share_description.md")
     src = Template("".join(template))
     result = src.substitute(to_substitute)
 
     return result
+
+
+def get_host_from_url(url: str):
+    url_object = urlparse(url, allow_fragments=False)
+    url_object = url_object._replace(path="")
+    url_object = url_object._replace(params="")
+    url_object = url_object._replace(query="")
+    return url_object.geturl()
 
 
 @space_bp.route("/", methods=["GET"])
@@ -181,8 +191,9 @@ def post():
     share_purl = api_response.public_url
     share_root_file_id = api_response.root_file_id
 
-    description = create_metadata_md(parameters["name"], "Masaryk University", share_root_file_id,
-                                     os.path.join(parameters["path"] + "/SPA.yml"))
+    description = create_metadata_md(
+        parameters["name"], "Masaryk University", share_root_file_id,
+        os.path.join(parameters["path"] + "/SPA.yml"), get_host_from_url(onezone_configuration.host))
 
     api_instance = oneprovider_client.ShareApi(oneprovider_client.ApiClient(oneprovider_configuration))
     body = oneprovider_client.SharesShidBody(description=description)
