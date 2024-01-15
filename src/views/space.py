@@ -47,6 +47,42 @@ def get():
     return "Return from example GET"
 
 
+@space_bp.route("/<identity>", methods=["GET"])
+def get_by_id(identity: str):
+    oneprovider_configuration = oneprovider_client.configuration.Configuration()
+    oneprovider_configuration.host = "https://BLINDED.muni.cz/api/v3/oneprovider"
+    oneprovider_configuration.api_key['X-Auth-Token'] = "BLINDED"
+
+    # create an instance of the API class
+    api_instance = oneprovider_client.SpaceApi(oneprovider_client.ApiClient(oneprovider_configuration))
+    # sid = 'sid_example'  # str | Space Id.
+
+    try:
+        # Get basic space information
+        api_response = api_instance.get_space(identity)
+
+        pprint(api_response)
+    except ApiExceptionProvider as e:
+        print("Exception when calling SpaceApi->get_space: %s\n" % e)
+
+
+    file_id = api_response.file_id
+
+    from models.dir_entry import DirEntry
+    from api import file_operations_api
+
+    file_op_api = file_operations_api.FileOperationsApi(oneprovider_configuration)
+    basic_dir = DirEntry(file_id=file_id)
+    file_op_api.get_children(basic_dir)
+
+    for child in basic_dir.children:
+        if isinstance(child, DirEntry):
+            file_op_api.get_children(child)
+
+    return json.dumps(basic_dir)
+
+
+
 @space_bp.route("/create", methods=["POST"])
 def post():
     onezone_configuration = onezone_client.configuration.Configuration()
