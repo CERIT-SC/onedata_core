@@ -1,0 +1,27 @@
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "onedata_wrapper"
+authors = [
+    {name = "CERIT-SC", email = "info@cerit-sc.cz"},
+]
+description = "This is a wrapper on the Python Onedata libraries. The library makes some workflows on Onedata systems faster and easier and helps the developer communicate with Onedata more reliable"
+readme = "README.md"
+version = "1.0.0"
+requires-python = ">=3.9"
+dependencies = [
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["onedata_wrapper*"]
