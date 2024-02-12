@@ -1,5 +1,5 @@
-from models.space.space_state import SpaceState
-from models.filesystem.dir_entry import DirEntry
+from onedata_wrapper.models.space.space_state import SpaceState
+from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 
 
 class WithRoot(SpaceState):

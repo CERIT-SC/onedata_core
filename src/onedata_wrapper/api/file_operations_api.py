@@ -1,11 +1,11 @@
 from oneprovider_client.configuration import Configuration as OneproviderConfiguration
 
-from converters.space_converter import SpaceConverter
-from models.filesystem.dir_entry import DirEntry
-from models.space.space import Space
+from onedata_wrapper.converters.space_converter import SpaceConverter
+from onedata_wrapper.models.filesystem.dir_entry import DirEntry
+from onedata_wrapper.models.space.space import Space
 import oneprovider_client
 from oneprovider_client.rest import ApiException
-from converters.directory_children_converter import DirectoryChildrenConverter
+from onedata_wrapper.converters.directory_children_converter import DirectoryChildrenConverter
 
 
 class FileOperationsApi(object):

@@ -1,7 +1,7 @@
 from oneprovider_client.models.space import Space as OneproviderSpace
-from converters.abstract_converter import AbstractConverter
-from models.space.space import Space
-from models.filesystem.dir_entry import DirEntry
+from onedata_wrapper.converters.abstract_converter import AbstractConverter
+from onedata_wrapper.models.space.space import Space
+from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 
 
 class SpaceConverter(AbstractConverter):

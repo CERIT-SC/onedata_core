@@ -1,8 +1,6 @@
 from typing import Optional
 
-from models.filesystem.dir_entry import DirEntry
-from models.space.space_state import SpaceState
-from states.with_root import WithRoot
+from onedata_wrapper.models.space.space_state import SpaceState
 from states.without_root import WithoutRoot
 
 
