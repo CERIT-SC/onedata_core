@@ -1,5 +1,4 @@
 from oneprovider_client.configuration import Configuration as OneproviderConfiguration
-
 from onedata_wrapper.converters.space_converter import SpaceConverter
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.space.space import Space

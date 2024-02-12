@@ -1,7 +1,6 @@
 from typing import Optional
-
 from onedata_wrapper.models.space.space_state import SpaceState
-from states.without_root import WithoutRoot
+from onedata_wrapper.models.space.states.without_root import WithoutRoot
 
 
 class Space:
