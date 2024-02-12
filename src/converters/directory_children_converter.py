@@ -1,6 +1,6 @@
 from .file_attributes_converter import FileAttributesConverter
 from converters.abstract_converter import AbstractConverter
-from models.filesystem_entry import FilesystemEntry
+from models.filesystem.filesystem_entry import FilesystemEntry
 from oneprovider_client.models.directory_children import DirectoryChildren
 
 

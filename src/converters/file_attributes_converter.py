@@ -1,10 +1,10 @@
 from datetime import datetime
 from oneprovider_client.models.file_attributes import FileAttributes
 from converters.abstract_converter import AbstractConverter
-from models.filesystem_entry import FilesystemEntry
-from models.dir_entry import DirEntry
-from models.other_entry import OtherEntry
-from models.file_entry import FileEntry
+from models.filesystem.filesystem_entry import FilesystemEntry
+from models.filesystem.dir_entry import DirEntry
+from models.filesystem.other_entry import OtherEntry
+from models.filesystem.file_entry import FileEntry
 
 
 class FileAttributesConverter(AbstractConverter):

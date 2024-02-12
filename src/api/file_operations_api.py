@@ -1,5 +1,8 @@
 from oneprovider_client.configuration import Configuration as OneproviderConfiguration
-from models.dir_entry import DirEntry
+
+from converters.space_converter import SpaceConverter
+from models.filesystem.dir_entry import DirEntry
+from models.space.space import Space
 import oneprovider_client
 from oneprovider_client.rest import ApiException
 from converters.directory_children_converter import DirectoryChildrenConverter
@@ -42,3 +45,20 @@ class FileOperationsApi(object):
                 raise AttributeError("Error with getting children from FileId") from e
 
         return directory
+
+    def get_space_info(self, space: Space) -> Space:
+        if space.space_id is None:
+            raise ValueError("SpaceId of Space object was not set")
+
+        # create an instance of the API class
+        api_instance = oneprovider_client.SpaceApi(oneprovider_client.ApiClient(self._configuration))
+        sid = space.space_id
+
+        try:
+            # Get basic space information
+            api_response = api_instance.get_space(sid)
+        except ApiException as e:
+            raise AttributeError("Error with getting space info from SpaceId") from e
+
+        space = SpaceConverter.convert(api_response)
+        return space
