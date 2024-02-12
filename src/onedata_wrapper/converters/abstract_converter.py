@@ -6,4 +6,4 @@ class AbstractConverter(ABC):
     @staticmethod
     @abc.abstractmethod
     def convert(object_to_convert):
-        pass
+        raise NotImplementedError("This function must be implemented for all the inherited classes")
