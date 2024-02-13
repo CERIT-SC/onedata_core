@@ -39,7 +39,7 @@ class FileOperationsApi(object):
 
             if api_response.is_last:
                 break
-            token = api_response.token
+            kwargs["token"] = api_response.next_page_token
 
         return directory
 
