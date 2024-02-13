@@ -21,12 +21,15 @@ class FileOperationsApi(object):
                      "storage_user_id", "shares", "provider_id", "file_id", "parent_id", "hardlinks_count",
                      "index"]
 
-        try:
-            api_response = api_instance.list_children(directory.file_id, attribute=attribute)
-        except ApiException as e:
-            raise AttributeError("Error with getting children from FileId") from e
+        # using kwargs instead of writing attributes directly allows to omit "token" in the first run
+        kwargs = {"attribute": attribute}
 
         while True:
+            try:
+                api_response = api_instance.list_children(directory.file_id, **kwargs)
+            except ApiException as e:
+                raise AttributeError("Error with getting children from FileId") from e
+
             children = DirectoryChildrenConverter.convert(api_response)
 
             actual_children = directory.children
@@ -37,11 +40,6 @@ class FileOperationsApi(object):
             if api_response.is_last:
                 break
             token = api_response.token
-
-            try:
-                api_response = api_instance.list_children(directory.file_id, attribute=attribute, token=token)
-            except ApiException as e:
-                raise AttributeError("Error with getting children from FileId") from e
 
         return directory
 
