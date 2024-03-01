@@ -11,9 +11,15 @@ class FileAttributesConverter(AbstractConverter):
     @staticmethod
     def convert(file_attributes: FileAttributes) -> FilesystemEntry:
         # changed
-        entry_atime = datetime.fromtimestamp(file_attributes.atime)
-        entry_mtime = datetime.fromtimestamp(file_attributes.mtime)
-        entry_ctime = datetime.fromtimestamp(file_attributes.ctime)
+        entry_atime = None
+        entry_mtime = None
+        entry_ctime = None
+        if file_attributes.atime is not None:
+            entry_atime = datetime.fromtimestamp(file_attributes.atime)
+        if file_attributes.mtime is not None:
+            entry_mtime = datetime.fromtimestamp(file_attributes.mtime)
+        if file_attributes.ctime is not None:
+            entry_ctime = datetime.fromtimestamp(file_attributes.ctime)
         # unchanged
         entry_name = file_attributes.name
         entry_mode = file_attributes.mode
@@ -38,6 +44,6 @@ class FileAttributesConverter(AbstractConverter):
         elif file_attributes.type == "DIR":
             entry = DirEntry(None, *common_attributes)
         else:
-            entry = OtherEntry(file_attributes.type,*common_attributes)
+            entry = OtherEntry(file_attributes.type, *common_attributes)
 
         return entry
