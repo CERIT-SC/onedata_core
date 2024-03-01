@@ -5,21 +5,20 @@ from onedata_wrapper.models.space.space import Space
 import oneprovider_client
 from oneprovider_client.rest import ApiException
 from onedata_wrapper.converters.directory_children_converter import DirectoryChildrenConverter
+from onedata_wrapper.selectors.file_attribute import FileAttribute as FA
 
 
 class FileOperationsApi(object):
     def __init__(self, configuration: OneproviderConfiguration):
         self._configuration: OneproviderConfiguration = configuration
 
-    def get_children(self, directory: DirEntry) -> DirEntry:
+    def get_children(self, directory: DirEntry, attributes: FA = FA.FILE_ID | FA.NAME) -> DirEntry:
         if directory.file_id is None:
             raise ValueError("FileId of DirEntry object was not set")
 
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
         # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/list_children
-        attribute = ["name", "owner_id", "type", "mode", "size", "atime", "mtime", "ctime", "storage_group_id",
-                     "storage_user_id", "shares", "provider_id", "file_id", "parent_id", "hardlinks_count",
-                     "index"]
+        attribute = attributes.convert()
 
         # using kwargs instead of writing attributes directly allows to omit "token" in the first run
         kwargs = {"attribute": attribute}
