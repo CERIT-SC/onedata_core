@@ -5,6 +5,8 @@ from onedata_wrapper.models.space.space import Space
 import oneprovider_client
 from oneprovider_client.rest import ApiException
 from onedata_wrapper.converters.directory_children_converter import DirectoryChildrenConverter
+from onedata_wrapper.converters.file_attributes_converter import FileAttributesConverter
+from onedata_wrapper.models.space.space_request import SpaceRequest
 from onedata_wrapper.selectors.file_attribute import FileAttribute as FA
 
 
@@ -18,8 +20,8 @@ class FileOperationsApi(object):
 
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
         # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/list_children
-        attribute = attributes.convert()
 
+        attribute = (attributes | FA.TYPE).convert()
         # using kwargs instead of writing attributes directly allows to omit "token" in the first run
         kwargs = {"attribute": attribute}
 
@@ -42,13 +44,13 @@ class FileOperationsApi(object):
 
         return directory
 
-    def get_space_info(self, space: Space) -> Space:
-        if space.space_id is None:
+    def get_space(self, space_request: SpaceRequest) -> Space:
+        if space_request.space_id is None:
             raise ValueError("SpaceId of Space object was not set")
 
         # create an instance of the API class
         api_instance = oneprovider_client.SpaceApi(oneprovider_client.ApiClient(self._configuration))
-        sid = space.space_id
+        sid = space_request.space_id
 
         try:
             # Get basic space information
@@ -56,5 +58,31 @@ class FileOperationsApi(object):
         except ApiException as e:
             raise AttributeError("Error with getting space info from SpaceId") from e
 
-        space = SpaceConverter.convert(api_response)
-        return space
+        space_request = SpaceConverter.convert(api_response)
+        return space_request
+
+    def get_root(self, space: Space, attributes: FA = FA.FILE_ID | FA.NAME):
+        space.initialize_root()  # creates empty DirEntry, not needed to access _space_root_id
+
+        if space.root_dir is None or space.root_dir.file_id is None:
+            raise ValueError("RootDir of Space object was not set, Space not initialized properly")
+
+        api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
+        # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/get_attrs
+
+        attribute = (attributes | FA.TYPE).convert()
+        # using kwargs instead of writing attributes directly allows to omit "token" in the first run
+
+        # WARNING: multiple attributes not working, BUG in Onedata
+        kwargs = {"attribute": attribute}
+
+        try:
+            # api_response = api_instance.get_attrs(space.root_dir.file_id, **kwargs)
+            api_response = api_instance.get_attrs(space.root_dir.file_id)
+        except ApiException as e:
+            space.discard_root()
+            raise AttributeError("Error with getting info about space's root directory") from e
+
+        root_dir = FileAttributesConverter.convert(api_response)
+
+        space.reinit_root(root_dir)
