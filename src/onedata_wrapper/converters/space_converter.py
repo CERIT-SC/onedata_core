@@ -7,12 +7,11 @@ from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 class SpaceConverter(AbstractConverter):
     @staticmethod
     def convert(oneprovider_space: OneproviderSpace) -> Space:
-        # changed
-        entry_root_dir = DirEntry(file_id=oneprovider_space.space_id)
         # unchanged
+        entry_root_file_id = oneprovider_space.file_id
         entry_name = oneprovider_space.name
         entry_space_id = oneprovider_space.space_id
         entry_providers = oneprovider_space.providers
 
-        space = Space(entry_name, entry_space_id, entry_root_dir, entry_providers)
+        space = Space(entry_name, entry_space_id, entry_root_file_id, entry_providers)
         return space
