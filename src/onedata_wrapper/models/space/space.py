@@ -1,5 +1,4 @@
 from typing import Optional
-
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.space.space_state import SpaceState
 from onedata_wrapper.models.space.states.inconsistent_root import InconsistentRoot

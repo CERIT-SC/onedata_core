@@ -1,6 +1,6 @@
 import abc
 from typing import Optional
-from .filesystem_entry import FilesystemEntry
+from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 
 
 class DirEntry(FilesystemEntry):

@@ -1,4 +1,4 @@
-from .file_attributes_converter import FileAttributesConverter
+from onedata_wrapper.converters.file_attributes_converter import FileAttributesConverter
 from onedata_wrapper.converters.abstract_converter import AbstractConverter
 from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 from oneprovider_client.models.directory_children import DirectoryChildren
