@@ -106,3 +106,14 @@ class FileOperationsApi(object):
             raise TypeError("The root directory is expected to be of type DirEntry")
 
         space.reinit_root(root_dir)
+
+    def new_entry(self, entry_request: NewEntryRequest) -> FilesystemEntry:
+        parameters = entry_request.request_attrs()
+
+        api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
+
+        try:
+            # Create file in directory
+            api_response = api_instance.create_file(**parameters)
+        except ApiException as e:
+            print("Exception when calling BasicFileOperationsApi->create_file: %s\n" % e)
