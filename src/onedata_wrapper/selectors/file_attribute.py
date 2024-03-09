@@ -42,3 +42,8 @@ _conversion_table = {
     FileAttribute.HARDLINKS_COUNT: "hardlinks_count",
     FileAttribute.INDEX: "index"
 }
+
+ALL = (FileAttribute.NAME | FileAttribute.OWNER_ID | FileAttribute.TYPE | FileAttribute.MODE | FileAttribute.SIZE
+       | FileAttribute.ATIME | FileAttribute.MTIME | FileAttribute.CTIME | FileAttribute.STORAGE_GROUP_ID
+       | FileAttribute.STORAGE_USER_ID | FileAttribute.SHARES | FileAttribute.PROVIDER_ID | FileAttribute.FILE_ID
+       | FileAttribute.PARENT_ID | FileAttribute.HARDLINKS_COUNT | FileAttribute.INDEX)
