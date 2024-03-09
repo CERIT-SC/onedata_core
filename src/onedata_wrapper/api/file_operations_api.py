@@ -3,6 +3,7 @@ from onedata_wrapper.converters.space_converter import SpaceConverter
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 from onedata_wrapper.models.filesystem.filesystem_entry_request import FilesystemEntryRequest
+from onedata_wrapper.models.filesystem.new_entry_request import NewEntryRequest
 from onedata_wrapper.models.space.space import Space
 import oneprovider_client
 from oneprovider_client.rest import ApiException
