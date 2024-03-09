@@ -1,6 +1,8 @@
 from oneprovider_client.configuration import Configuration as OneproviderConfiguration
 from onedata_wrapper.converters.space_converter import SpaceConverter
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
+from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
+from onedata_wrapper.models.filesystem.filesystem_entry_request import FilesystemEntryRequest
 from onedata_wrapper.models.space.space import Space
 import oneprovider_client
 from oneprovider_client.rest import ApiException
@@ -61,11 +63,10 @@ class FileOperationsApi(object):
         space_request = SpaceConverter.convert(api_response)
         return space_request
 
-    def get_root(self, space: Space, attributes: FA = FA.FILE_ID | FA.NAME):
-        space.initialize_root()  # creates empty DirEntry, not needed to access _space_root_id
-
-        if space.root_dir is None or space.root_dir.file_id is None:
-            raise ValueError("RootDir of Space object was not set, Space not initialized properly")
+    def get_file(self, fs_entry_request: FilesystemEntryRequest, attributes: FA = FA.FILE_ID | FA.NAME) \
+            -> FilesystemEntry:
+        if fs_entry_request.file_id is None:
+            raise ValueError("FileId of FilesystemEntry object was not set")
 
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
         # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/get_attrs
@@ -78,11 +79,29 @@ class FileOperationsApi(object):
 
         try:
             # api_response = api_instance.get_attrs(space.root_dir.file_id, **kwargs)
-            api_response = api_instance.get_attrs(space.root_dir.file_id)
+            api_response = api_instance.get_attrs(fs_entry_request.file_id)
+        except ApiException as e:
+            raise AttributeError("Error with getting info about file with given Id") from e
+
+        fs_entry = FileAttributesConverter.convert(api_response)
+
+        return fs_entry
+
+    def get_root(self, space: Space, attributes: FA = FA.FILE_ID | FA.NAME):
+        space.initialize_root()  # creates empty DirEntry, not needed to access _space_root_id
+
+        if space.root_dir is None or space.root_dir.file_id is None:
+            raise ValueError("RootDir of Space object was not set, Space not initialized properly")
+
+        root_dir_request = FilesystemEntryRequest(file_id=space.root_dir.file_id)
+
+        try:
+            root_dir = self.get_file(root_dir_request, attributes=attributes)
         except ApiException as e:
             space.discard_root()
             raise AttributeError("Error with getting info about space's root directory") from e
 
-        root_dir = FileAttributesConverter.convert(api_response)
+        if not isinstance(root_dir, DirEntry):
+            raise TypeError("The root directory is expected to be of type DirEntry")
 
         space.reinit_root(root_dir)
