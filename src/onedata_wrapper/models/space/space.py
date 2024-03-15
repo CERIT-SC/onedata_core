@@ -7,6 +7,9 @@ from onedata_wrapper.models.space.states.without_root import WithoutRoot
 
 
 class Space:
+    """
+    Class representing Onedata Space.
+    """
     def __init__(self, name: str, space_id: str, root_file_id: str, providers: list):
         self._state: SpaceState = WithoutRoot()
 
@@ -31,7 +34,9 @@ class Space:
         self._state = WithoutRoot()
 
     @property
-    def space_id(self):
+    def space_id(self) -> str:
+        """Onedata SpaceId
+        """
         if isinstance(self._state, InconsistentRoot):
             raise ValueError("Space in InconsistentRoot state")
 
@@ -39,6 +44,8 @@ class Space:
 
     @property
     def name(self):
+        """Name of the Space
+        """
         if isinstance(self._state, InconsistentRoot):
             raise ValueError("Space in InconsistentRoot state")
 
@@ -46,6 +53,11 @@ class Space:
 
     @property
     def root_dir(self) -> DirEntry:
+        """
+        DirEntry object representing root directory of the space.
+
+        This object is accessible only if the state of the object is `WithRoot` or `InconsistentRoot`.
+        """
         if isinstance(self._state, WithoutRoot):
             raise ValueError("Cannot return root directory of a space in state WithoutRoot")
 
