@@ -3,6 +3,10 @@ from onedata_wrapper.selectors.abstract_selector import AbstractSelector
 
 
 class FileAttribute(AbstractSelector):
+    """
+    Enumerator of File Attributes used for FileOperationsApi functions get_file()
+    and get_root() (which is derivation of get_file() function)
+    """
     NAME = auto()
     OWNER_ID = auto()
     TYPE = auto()
@@ -47,3 +51,6 @@ ALL = (FileAttribute.NAME | FileAttribute.OWNER_ID | FileAttribute.TYPE | FileAt
        | FileAttribute.ATIME | FileAttribute.MTIME | FileAttribute.CTIME | FileAttribute.STORAGE_GROUP_ID
        | FileAttribute.STORAGE_USER_ID | FileAttribute.SHARES | FileAttribute.PROVIDER_ID | FileAttribute.FILE_ID
        | FileAttribute.PARENT_ID | FileAttribute.HARDLINKS_COUNT | FileAttribute.INDEX)
+"""
+Special variable which provides select for all Selector items.
+"""
