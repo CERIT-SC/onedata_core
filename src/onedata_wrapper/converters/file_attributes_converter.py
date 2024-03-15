@@ -34,9 +34,9 @@ class FileAttributesConverter(AbstractConverter):
         entry_shares = file_attributes.shares
         entry_index = file_attributes.index
 
-        common_attributes = (entry_name, entry_mode, entry_size, entry_hardlinks,
+        common_attributes = (entry_name, entry_file_id, entry_mode, entry_size, entry_hardlinks,
                              entry_atime, entry_mtime, entry_ctime,
-                             entry_owner_id, entry_file_id, entry_parent_id, entry_provider_id, entry_storage_user_id,
+                             entry_owner_id, entry_parent_id, entry_provider_id, entry_storage_user_id,
                              entry_storage_group_id, entry_shares, entry_index)
 
         if file_attributes.type == "REG":
