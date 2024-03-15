@@ -7,24 +7,13 @@ from onedata_wrapper.models.space.states.without_root import WithoutRoot
 
 
 class Space:
-    def __init__(self, name=None, space_id=None, root_file_id=None, providers=None):
-        self._name: Optional[str] = None
-        self._space_id: Optional[str] = None
-        self._root_file_id: Optional[str] = None
-        self._providers: Optional[list[tuple]] = None
+    def __init__(self, name: str, space_id: str, root_file_id: str, providers: list):
         self._state: SpaceState = WithoutRoot()
 
-        if name is not None:
-            self._name = name
-
-        if space_id is not None:
-            self._space_id = space_id
-
-        if root_file_id is not None:
-            self._root_file_id = root_file_id
-
-        if providers is not None:
-            self._providers = providers
+        self._name = name
+        self._space_id = space_id
+        self._root_file_id = root_file_id
+        self._providers = providers
 
     def initialize_root(self):
         init_root_dir = DirEntry(file_id=self._root_file_id)
