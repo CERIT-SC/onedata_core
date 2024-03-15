@@ -11,7 +11,7 @@ class NewFileRequest(NewEntryRequest):
         self._contents = contents
         super().__init__(parent, name, mode)
 
-    def request_attrs(self) -> dict[str, str]:
+    def request_attrs(self) -> dict[str, Union[str, bytes]]:
         out = super().request_attrs()
         additional = {
             "type": "REG"

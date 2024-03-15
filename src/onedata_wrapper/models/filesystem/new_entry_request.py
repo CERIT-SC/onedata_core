@@ -27,7 +27,7 @@ class NewEntryRequest(abc.ABC):
     def parent_id(self):
         return self._file_id
 
-    def request_attrs(self) -> dict[str, str]:
+    def request_attrs(self) -> dict[str, Union[str, bytes]]:
         return {
             "name": self.name,
             "mode": self.mode,

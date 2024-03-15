@@ -9,7 +9,7 @@ class NewDirectoryRequest(NewEntryRequest):
     def __init__(self, parent: Union[DirEntry, EntryRequest], name: str, mode: int = 644):
         super().__init__(parent, name, mode)
 
-    def request_attrs(self) -> dict[str, str]:
+    def request_attrs(self) -> dict[str, Union[str, bytes]]:
         out = super().request_attrs()
         additional = {
             "type": "DIR"
