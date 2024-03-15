@@ -6,7 +6,7 @@ from onedata_wrapper.models.filesystem.new_entry_request import NewEntryRequest
 
 
 class NewFileRequest(NewEntryRequest):
-    def __init__(self, parent: Union[DirEntry, EntryRequest], name: str, mode: int = 0o0644,
+    def __init__(self, parent: Union[DirEntry, EntryRequest], name: str, mode: int = 644,
                  contents: Optional[bytes] = None):
         self._contents = contents
         super().__init__(parent, name, mode)

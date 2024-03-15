@@ -7,7 +7,7 @@ from onedata_wrapper.models.filesystem.entry_request import EntryRequest
 
 class NewEntryRequest(abc.ABC):
 
-    def __init__(self, parent: Union[DirEntry, EntryRequest], name: str, mode: int = 0o0644):
+    def __init__(self, parent: Union[DirEntry, EntryRequest], name: str, mode: int = 644):
         if parent.file_id is None:
             raise ValueError("FileId of DirEntry or FilesystemEntry object was not set")
 
