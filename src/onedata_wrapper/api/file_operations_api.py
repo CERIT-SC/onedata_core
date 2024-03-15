@@ -72,7 +72,7 @@ class FileOperationsApi(object):
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
         # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/get_attrs
 
-        attribute = (attributes | FA.TYPE).convert()
+        attribute = (attributes | FA.FILE_ID | FA.NAME | FA.TYPE).convert()
         # using kwargs instead of writing attributes directly allows to omit "token" in the first run
 
         # WARNING: multiple attributes not working, BUG in Onedata
