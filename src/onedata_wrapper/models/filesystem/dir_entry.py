@@ -3,8 +3,13 @@ from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 
 
 class DirEntry(FilesystemEntry):
-    def __init__(self, children: list[FilesystemEntry] = None, name=None, mode=None, size=None, hard_links=None,
-                 atime=None, mtime=None, ctime=None, owner_id=None, file_id=None, parent_id=None, provider_id=None,
+    """
+    Class representing Directory Entry in Onedata filesystem.
+
+    Besides default attributes, it contains a list of children of FilesystemEntry type
+
+    :raises ValueError: When operations with children has failed
+    """
     def __init__(self, children: Optional[list[FilesystemEntry]], name: str, file_id: str, mode=None, size=None, hard_links=None,
                  atime=None, mtime=None, ctime=None, owner_id=None, parent_id=None, provider_id=None,
                  storage_user_id=None, storage_group_id=None, shares=None, index=None):
@@ -19,10 +24,17 @@ class DirEntry(FilesystemEntry):
 
     @property
     def children(self):
+        """Children of actual DirEntry
+        :raises ValueError: if this property was called before setting the children first
+        """
+        if self._children is None:
+            raise ValueError("DirEntry has not yet assigned children")
         return self._children
 
     @children.setter
     def children(self, value: list[FilesystemEntry]):
+        """Sets children to actual DirEntry
+        :raises ValueError: if children are not in the correct format (list of FilesystemEntry type)"""
         if not isinstance(value, list):
             raise ValueError("Children to set are not list")
 

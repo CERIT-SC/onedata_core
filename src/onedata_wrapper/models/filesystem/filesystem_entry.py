@@ -4,8 +4,13 @@ from abc import ABC
 
 
 class FilesystemEntry(ABC):
-    def __init__(self, name=None, mode=None, size=None, hard_links=None, atime=None, mtime=None, ctime=None,
-                 owner_id=None, file_id=None, parent_id=None, provider_id=None, storage_user_id=None,
+    """
+    Class representing Filesystem Entry in Onedata filesystem.
+
+    Parameters are exact as what Onedata API returns
+    """
+    def __init__(self, name: str, file_id: str, mode=None, size=None, hard_links=None, atime=None, mtime=None, ctime=None,
+                 owner_id=None, parent_id=None, provider_id=None, storage_user_id=None,
                  storage_group_id=None, shares=None, index=None):
         self._name: str = name
         self._file_id: str = file_id
@@ -76,18 +81,26 @@ class FilesystemEntry(ABC):
 
     @property
     def name(self):
+        """Name of the file
+        """
         return self._name
 
     @property
     def file_id(self):
+        """Onedata FileId
+        """
         return self._file_id
 
     @property
     def mode(self):
+        """POSIX file permissions in decimal format (e.g. 644, 700)
+        """
         return self._mode
 
     @property
     def size(self):
+        """Size of the file
+        """
         return self._size
 
     @property
