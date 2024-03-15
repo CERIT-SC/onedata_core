@@ -107,13 +107,23 @@ class FileOperationsApi(object):
 
         space.reinit_root(root_dir)
 
-    def new_entry(self, entry_request: NewEntryRequest) -> FilesystemEntry:
+    def new_entry(self, entry_request: NewEntryRequest) -> FilesystemEntryRequest:
         parameters = entry_request.request_attrs()
 
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
+
+        # octet-stream expects body, but when working with directories, no body is provided
+        # because of that, we simulate that there is some body
+        if parameters.get("body") is None:
+            parameters["body"] = b""
 
         try:
             # Create file in directory
             api_response = api_instance.create_file(**parameters)
         except ApiException as e:
-            print("Exception when calling BasicFileOperationsApi->create_file: %s\n" % e)
+            raise IOError("Could not create requested file") from e
+
+        file_id = api_response.get("fileId")
+
+        fse_request = FilesystemEntryRequest(file_id)
+        return fse_request
