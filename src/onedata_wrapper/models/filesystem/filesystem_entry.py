@@ -12,6 +12,9 @@ class FilesystemEntry(ABC):
     def __init__(self, name: str, file_id: str, mode=None, size=None, hard_links=None, atime=None, mtime=None, ctime=None,
                  owner_id=None, parent_id=None, provider_id=None, storage_user_id=None,
                  storage_group_id=None, shares=None, index=None):
+        if name is None or file_id is None:
+            raise ValueError("Filesystem Entry must have its own name and fileId")
+
         self._name: str = name
         self._file_id: str = file_id
 

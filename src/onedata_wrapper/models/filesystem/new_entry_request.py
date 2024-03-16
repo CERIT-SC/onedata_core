@@ -9,6 +9,8 @@ class NewEntryRequest(abc.ABC):
     def __init__(self, parent: Union[DirEntry, EntryRequest], name: str, mode: int = 644):
         if parent.file_id is None:
             raise ValueError("FileId of DirEntry or FilesystemEntry object was not set")
+        if name is None:
+            raise ValueError("Name of the new Entry was not set")
 
         self._file_id = parent.file_id
         self._name = name

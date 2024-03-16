@@ -13,6 +13,8 @@ class Space:
     def __init__(self, name: str, space_id: str, root_file_id: str, providers: list):
         self._state: SpaceState = WithoutRoot()
 
+        if name is None or space_id is None or root_file_id:
+            raise ValueError("Space must have its own name, spaceId and root fileId")
         self._name = name
         self._space_id = space_id
         self._root_file_id = root_file_id
