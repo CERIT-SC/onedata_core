@@ -24,9 +24,11 @@ class FileOperationsApi(object):
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
         # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/list_children
 
-        attribute = (attributes | FA.TYPE).convert()
+        attribute = (attributes | FA.FILE_ID | FA.NAME | FA.TYPE).convert()
         # using kwargs instead of writing attributes directly allows to omit "token" in the first run
         kwargs = {"attribute": attribute}
+
+        directory_children = []
 
         while True:
             try:
@@ -36,15 +38,13 @@ class FileOperationsApi(object):
 
             children = DirectoryChildrenConverter.convert(api_response)
 
-            actual_children = directory.children
-            if actual_children is None:
-                actual_children = []
-            directory.children = actual_children + children
+            directory_children.extend(children)
 
             if api_response.is_last:
                 break
             kwargs["token"] = api_response.next_page_token
 
+        directory.children = directory_children
         return directory
 
     def get_space(self, space_request: SpaceRequest) -> Space:
