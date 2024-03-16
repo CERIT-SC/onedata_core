@@ -1,11 +1,11 @@
-from typing import Union, Optional
-
-from onedata_wrapper.models.filesystem.dir_entry import DirEntry
-from onedata_wrapper.models.filesystem.entry_request import EntryRequest
+from typing import Union
 from onedata_wrapper.models.filesystem.new_entry_request import NewEntryRequest
 
 
 class NewDirectoryRequest(NewEntryRequest):
+    """
+    Class representing New Directory Entry Request when creating Entry in Onedata
+    """
 
     def request_attrs(self) -> dict[str, Union[str, bytes]]:
         out = super().request_attrs()

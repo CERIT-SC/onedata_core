@@ -3,6 +3,11 @@ from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 
 
 class OtherEntry(FilesystemEntry):
+    """
+    Class representing another type of Entry in Onedata filesystem.
+
+    Besides default attributes, it contains an attribute representing an Entry type in Onedata syntax
+    """
     def __init__(self, entry_type: str, name: str, file_id: str, mode=None, size=None, hard_links=None, atime=None, mtime=None,
                  ctime=None, owner_id=None, parent_id=None, provider_id=None, storage_user_id=None,
                  storage_group_id=None, shares=None, index=None):
@@ -16,4 +21,6 @@ class OtherEntry(FilesystemEntry):
 
     @property
     def type(self):
+        """Onedata type
+        """
         return self._type
