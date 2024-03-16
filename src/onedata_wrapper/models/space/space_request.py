@@ -2,6 +2,8 @@
 class SpaceRequest(object):
     """
     Class representing a request to get info about Onedata Space.
+
+    This class is not a Space class on its own; it just holds information how to access real Space
     """
     def __init__(self, space_id: str):
         """
