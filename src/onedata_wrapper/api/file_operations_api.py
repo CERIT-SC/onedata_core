@@ -14,13 +14,73 @@ from onedata_wrapper.selectors.file_attribute import FileAttribute as FA
 
 
 class FileOperationsApi(object):
+    """
+    Class representing File Operations API used as a facade pattern communicating with onedata-lib(s)
+    doing file operations more accessible due to abstraction of concretes
+
+    This part of the API uses models from models/filesystem package.
+    Those are necessary to use, to use this API.
+    """
     def __init__(self, configuration: OneproviderConfiguration):
+        """
+        :param configuration: OneproviderConfiguration from oneprovider_client library. Must be initialized.
+        """
         self._configuration: OneproviderConfiguration = configuration
 
-    def get_children(self, directory: DirEntry, attributes: FA = FA.FILE_ID | FA.NAME) -> DirEntry:
-        if directory.file_id is None:
-            raise ValueError("FileId of DirEntry object was not set")
+    def get_file(self, entry_request: EntryRequest, attributes: FA = FA.FILE_ID | FA.NAME) \
+            -> FilesystemEntry:
+        """
+        Returns File represented by `entry_request` object from Onedata.
 
+        In order this function to work,
+        an actual user represented by token MUST HAVE rights to access Entry with specified FileId
+
+        :param entry_request: EntryRequest object representing the file to be returned
+        :param attributes: FileAttribute (from selectors) object representing values of Onedata Filesystem Entry
+            to be included in the new returned object. Minimal requirement of `fileId`, `name` and `type`
+            is added automatically
+        :return: FilesystemEntry represented by `entry_request` with data fetched from Onedata
+        :raises AttributeError: if `file_id` in `entry_request` is not a valid FileId in Onedata or any related error
+        """
+        api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
+        # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/get_attrs
+
+        attribute = (attributes | FA.FILE_ID | FA.NAME | FA.TYPE).convert()
+        # using kwargs instead of writing attributes directly allows to omit "token" in the first run
+
+        # WARNING: multiple attributes not working, BUG in Onedata
+        kwargs = {"attribute": attribute}
+
+        try:
+            # api_response = api_instance.get_attrs(space.root_dir.file_id, **kwargs)
+            api_response = api_instance.get_attrs(entry_request.file_id)
+        except ApiException as e:
+            raise AttributeError("Error with getting info about file with given Id") from e
+
+        fs_entry = FileAttributesConverter.convert(api_response)
+
+        return fs_entry
+
+    def get_children(self, directory: DirEntry, attributes: FA = FA.FILE_ID | FA.NAME) -> DirEntry:
+        """
+        Returns DirEntry provided using `directory` with updated children fetched from Onedata
+
+        In the case of any error during children fetching, the old value of children is kept and not overwritten.
+        Because of that, `directory` cannot be in inconsistent state.
+
+        This function returns ALL CHILDREN of given directory.
+        Because of that, a lot of objects could be created eating a lot of memory.
+
+        In order this function to work,
+        an actual user represented by token MUST HAVE rights to access parent DirEntry with specified FileId
+
+        :param directory: DirEntry object representing the parent file children to be fetched and returned
+        :param attributes: FileAttribute (from selectors) object representing values of Onedata Filesystem Entry
+            to be included in the new returned object. Minimal requirement of `fileId`, `name` and `type`
+            is added automatically
+        :return: DirEntry with updated children fetched from Onedata
+        :raises AttributeError: if children couldn't be fetched from Onedata or any related error
+        """
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
         # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/list_children
 
@@ -47,68 +107,20 @@ class FileOperationsApi(object):
         directory.children = directory_children
         return directory
 
-    def get_space(self, space_request: SpaceRequest) -> Space:
-        if space_request.space_id is None:
-            raise ValueError("SpaceId of Space object was not set")
+    def new_entry(self, new_entry_request: NewEntryRequest) -> EntryRequest:
+        """
+        Creates new Entry in Onedata using `new_entry_request` and returns EntryRequest
+        which can be later used for fetching more data about newly created Entry
 
-        # create an instance of the API class
-        api_instance = oneprovider_client.SpaceApi(oneprovider_client.ApiClient(self._configuration))
-        sid = space_request.space_id
+        In order this function to work,
+        an actual user represented by token MUST HAVE caveats allowing the file creation
+        and the filesystem on which operations are provided CANNOT BE read-only
 
-        try:
-            # Get basic space information
-            api_response = api_instance.get_space(sid)
-        except ApiException as e:
-            raise AttributeError("Error with getting space info from SpaceId") from e
-
-        space_request = SpaceConverter.convert(api_response)
-        return space_request
-
-    def get_file(self, fs_entry_request: EntryRequest, attributes: FA = FA.FILE_ID | FA.NAME) \
-            -> FilesystemEntry:
-        if fs_entry_request.file_id is None:
-            raise ValueError("FileId of FilesystemEntry object was not set")
-
-        api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
-        # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/get_attrs
-
-        attribute = (attributes | FA.FILE_ID | FA.NAME | FA.TYPE).convert()
-        # using kwargs instead of writing attributes directly allows to omit "token" in the first run
-
-        # WARNING: multiple attributes not working, BUG in Onedata
-        kwargs = {"attribute": attribute}
-
-        try:
-            # api_response = api_instance.get_attrs(space.root_dir.file_id, **kwargs)
-            api_response = api_instance.get_attrs(fs_entry_request.file_id)
-        except ApiException as e:
-            raise AttributeError("Error with getting info about file with given Id") from e
-
-        fs_entry = FileAttributesConverter.convert(api_response)
-
-        return fs_entry
-
-    def get_root(self, space: Space, attributes: FA = FA.FILE_ID | FA.NAME):
-        space.initialize_root()  # creates empty DirEntry, not needed to access _space_root_id
-
-        if space.root_dir is None or space.root_dir.file_id is None:
-            raise ValueError("RootDir of Space object was not set, Space not initialized properly")
-
-        root_dir_request = EntryRequest(file_id=space.root_dir.file_id)
-
-        try:
-            root_dir = self.get_file(root_dir_request, attributes=attributes)
-        except ApiException as e:
-            space.discard_root()
-            raise AttributeError("Error with getting info about space's root directory") from e
-
-        if not isinstance(root_dir, DirEntry):
-            raise TypeError("The root directory is expected to be of type DirEntry")
-
-        space.reinit_root(root_dir)
-
-    def new_entry(self, entry_request: NewEntryRequest) -> EntryRequest:
-        parameters = entry_request.request_attrs()
+        :param new_entry_request: NewEntryRequest object representing the Entry to be created
+        :return: EntryRequest object representing newly created Entry which can be later used by get_file() function
+        :raises IOError: if new Entry couldn't be created
+        """
+        parameters = new_entry_request.request_attrs()
 
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
 
@@ -127,3 +139,66 @@ class FileOperationsApi(object):
 
         fse_request = EntryRequest(file_id)
         return fse_request
+
+    def get_space(self, space_request: SpaceRequest) -> Space:
+        """
+        Returns Space represented by `space_request` object from Onedata.
+
+        In order this function to work,
+        an actual user represented by token MUST HAVE rights to access Space with specified SpaceId
+
+        :param space_request: SpaceRequest object representing the space to be returned
+        :return: Space represented by `space_request` with data fetched from Onedata
+        :raises AttributeError: if `space_id` in `entry_request` is not a valid SpaceId in Onedata or any related error
+        """
+        # create an instance of the API class
+        api_instance = oneprovider_client.SpaceApi(oneprovider_client.ApiClient(self._configuration))
+        sid = space_request.space_id
+
+        try:
+            # Get basic space information
+            api_response = api_instance.get_space(sid)
+        except ApiException as e:
+            raise AttributeError("Error with getting space info from SpaceId") from e
+
+        space_request = SpaceConverter.convert(api_response)
+        return space_request
+
+    def get_root(self, space: Space, attributes: FA = FA.FILE_ID | FA.NAME) -> Space:
+        """
+        Returns Space provided using `space` with updated root fetched from Onedata
+
+        Warning: This function changes the state of the Space object.
+        If there is any try-catch mechanism for processing Exceptions, the Space object can be in inconsistent state
+        and cannot be longer used.
+
+        In order this function to work,
+        an actual user represented by token MUST HAVE rights to access Space with specified SpaceId
+        and its root file with specified FileOd
+
+        :param space: Space object representing the Onedata Space which root should be fetched and returned
+        :param attributes: FileAttribute (from selectors) object representing values of Onedata Filesystem Entry
+            to be included in the new returned object. Minimal requirement of `fileId`, `name` and `type`
+            is added automatically
+        :return: Space with updated root directory
+        :raises AttributeError: if root directory data couldn't be fetched from Onedata or any related error
+        :raises TypeError:  if the returned root directory is not of a DirEntry type
+        """
+        # creates empty DirEntry, not needed to access _space_root_id
+        space.initialize_root()
+
+        root_dir_request = EntryRequest(file_id=space.root_dir.file_id)
+
+        try:
+            root_dir = self.get_file(root_dir_request, attributes=attributes)
+        except ApiException as e:
+            space.discard_root()
+            raise AttributeError("Error with getting info about space's root directory") from e
+
+        if not isinstance(root_dir, DirEntry):
+            space.discard_root()
+            raise TypeError("The root directory is expected to be of type DirEntry")
+
+        space.reinit_root(root_dir)
+
+        return space
