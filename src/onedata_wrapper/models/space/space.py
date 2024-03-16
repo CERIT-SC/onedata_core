@@ -19,7 +19,7 @@ class Space:
         self._providers = providers
 
     def initialize_root(self):
-        init_root_dir = DirEntry(file_id=self._root_file_id)
+        init_root_dir = DirEntry(file_id=self._root_file_id, name=self._name, children=None)
         self._state = InconsistentRoot(init_root_dir)
 
     def reinit_root(self, root_dir: DirEntry):
