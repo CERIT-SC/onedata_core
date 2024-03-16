@@ -1,6 +1,5 @@
 import abc
-from typing import Union, Optional
-
+from typing import Union
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.entry_request import EntryRequest
 
