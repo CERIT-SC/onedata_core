@@ -1,12 +1,12 @@
-from abc import ABC
+import abc
 
 
 class EntryRequest(ABC):
+class EntryRequest(abc.ABC):
     def __init__(self, file_id: str):
-        self._file_id = None
-
-        if file_id is not None:
-            self._file_id = file_id
+        if file_id is None or not isinstance(file_id, str):
+            raise ValueError("Value for file_id must be set and must be string in order to initialize the object")
+        self._file_id: str = file_id
 
     @property
     def file_id(self):
