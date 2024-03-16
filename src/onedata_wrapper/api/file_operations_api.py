@@ -2,7 +2,7 @@ from oneprovider_client.configuration import Configuration as OneproviderConfigu
 from onedata_wrapper.converters.space_converter import SpaceConverter
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
-from onedata_wrapper.models.filesystem.filesystem_entry_request import FilesystemEntryRequest
+from onedata_wrapper.models.filesystem.entry_request import EntryRequest
 from onedata_wrapper.models.filesystem.new_entry_request import NewEntryRequest
 from onedata_wrapper.models.space.space import Space
 import oneprovider_client
@@ -64,7 +64,7 @@ class FileOperationsApi(object):
         space_request = SpaceConverter.convert(api_response)
         return space_request
 
-    def get_file(self, fs_entry_request: FilesystemEntryRequest, attributes: FA = FA.FILE_ID | FA.NAME) \
+    def get_file(self, fs_entry_request: EntryRequest, attributes: FA = FA.FILE_ID | FA.NAME) \
             -> FilesystemEntry:
         if fs_entry_request.file_id is None:
             raise ValueError("FileId of FilesystemEntry object was not set")
@@ -94,7 +94,7 @@ class FileOperationsApi(object):
         if space.root_dir is None or space.root_dir.file_id is None:
             raise ValueError("RootDir of Space object was not set, Space not initialized properly")
 
-        root_dir_request = FilesystemEntryRequest(file_id=space.root_dir.file_id)
+        root_dir_request = EntryRequest(file_id=space.root_dir.file_id)
 
         try:
             root_dir = self.get_file(root_dir_request, attributes=attributes)
@@ -107,7 +107,7 @@ class FileOperationsApi(object):
 
         space.reinit_root(root_dir)
 
-    def new_entry(self, entry_request: NewEntryRequest) -> FilesystemEntryRequest:
+    def new_entry(self, entry_request: NewEntryRequest) -> EntryRequest:
         parameters = entry_request.request_attrs()
 
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
@@ -125,5 +125,5 @@ class FileOperationsApi(object):
 
         file_id = api_response.get("fileId")
 
-        fse_request = FilesystemEntryRequest(file_id)
+        fse_request = EntryRequest(file_id)
         return fse_request
