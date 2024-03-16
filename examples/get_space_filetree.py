@@ -19,8 +19,10 @@ if __name__ == "__main__":
 
     # creating SpaceRequest object used for Space retrieval (not using API calls yet)
     space_request = SpaceRequest(space_id="BLINDED")
+
     # requesting Space information from Onedata
     space = file_op_api.get_space(space_request)
+
     # print(space.space_id, space.name)  # space info can be seen here
     # requesting information about Space root file
     file_op_api.get_root(space)
