@@ -13,5 +13,6 @@ class SpaceConverter(AbstractConverter):
         entry_space_id = oneprovider_space.space_id
         entry_providers = oneprovider_space.providers
 
-        space = Space(entry_name, entry_space_id, entry_root_file_id, entry_providers)
+        space = Space(name=entry_name, space_id=entry_space_id, root_file_id=entry_root_file_id,
+                      providers=entry_providers)
         return space
