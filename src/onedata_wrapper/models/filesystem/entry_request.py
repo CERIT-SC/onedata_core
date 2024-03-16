@@ -1,7 +1,6 @@
 import abc
 
 
-class EntryRequest(ABC):
 class EntryRequest(abc.ABC):
     def __init__(self, file_id: str):
         if file_id is None or not isinstance(file_id, str):
