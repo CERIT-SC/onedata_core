@@ -123,7 +123,7 @@ class FileOperationsApi(object):
         except ApiException as e:
             raise IOError("Could not create requested file") from e
 
-        file_id = api_response.get("fileId")
+        file_id = api_response.file_id
 
         fse_request = EntryRequest(file_id)
         return fse_request
