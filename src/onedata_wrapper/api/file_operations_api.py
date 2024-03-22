@@ -1,5 +1,4 @@
 from oneprovider_client.configuration import Configuration as OneproviderConfiguration
-from onedata_wrapper.converters.space_converter import SpaceConverter
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 from onedata_wrapper.models.filesystem.entry_request import EntryRequest
@@ -9,7 +8,6 @@ import oneprovider_client
 from oneprovider_client.rest import ApiException
 from onedata_wrapper.converters.directory_children_converter import DirectoryChildrenConverter
 from onedata_wrapper.converters.file_attributes_converter import FileAttributesConverter
-from onedata_wrapper.models.space.space_request import SpaceRequest
 from onedata_wrapper.selectors.file_attribute import FileAttribute as FA
 
 
@@ -139,30 +137,6 @@ class FileOperationsApi(object):
 
         fse_request = EntryRequest(file_id)
         return fse_request
-
-    def get_space(self, space_request: SpaceRequest) -> Space:
-        """
-        Returns Space represented by `space_request` object from Onedata.
-
-        In order this function to work,
-        an actual user represented by token MUST HAVE rights to access Space with specified SpaceId
-
-        :param space_request: SpaceRequest object representing the space to be returned
-        :return: Space represented by `space_request` with data fetched from Onedata
-        :raises AttributeError: if `space_id` in `entry_request` is not a valid SpaceId in Onedata or any related error
-        """
-        # create an instance of the API class
-        api_instance = oneprovider_client.SpaceApi(oneprovider_client.ApiClient(self._configuration))
-        sid = space_request.space_id
-
-        try:
-            # Get basic space information
-            api_response = api_instance.get_space(sid)
-        except ApiException as e:
-            raise AttributeError("Error with getting space info from SpaceId") from e
-
-        space_request = SpaceConverter.convert(api_response)
-        return space_request
 
     def get_root(self, space: Space, attributes: FA = FA.FILE_ID | FA.NAME) -> Space:
         """
