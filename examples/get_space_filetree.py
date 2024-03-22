@@ -4,6 +4,7 @@ This file provides a basic example how to use FileOperationsApi when the user kn
 
 import oneprovider_client
 from onedata_wrapper.api.file_operations_api import FileOperationsApi
+from onedata_wrapper.api.space_api import SpaceApi
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.space.space_request import SpaceRequest
 from onedata_wrapper.selectors.file_attribute import ALL as FA_ALL
@@ -16,12 +17,13 @@ if __name__ == "__main__":
 
     # initialization of the library File Operations API
     file_op_api = FileOperationsApi(oneprovider_configuration)
+    space_api = SpaceApi(oneprovider_configuration=oneprovider_configuration)
 
     # creating SpaceRequest object used for Space retrieval (not using API calls yet)
     space_request = SpaceRequest(space_id="BLINDED")
 
     # requesting Space information from Onedata
-    space = file_op_api.get_space(space_request)
+    space = space_api.get_space(space_request)
 
     # print(space.space_id, space.name)  # space info can be seen here
     # requesting information about Space root file
