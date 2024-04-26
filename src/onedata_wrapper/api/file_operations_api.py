@@ -3,6 +3,7 @@ from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 from onedata_wrapper.models.filesystem.entry_request import EntryRequest
 from onedata_wrapper.models.filesystem.new_entry_request import NewEntryRequest
+from onedata_wrapper.models.filesystem.symlink_entry import SymlinkEntry
 from onedata_wrapper.models.space.space import Space
 import oneprovider_client
 from oneprovider_client.rest import ApiException
@@ -104,6 +105,29 @@ class FileOperationsApi(object):
 
         directory.children = directory_children
         return directory
+
+    def get_symlink_value(self, symlink: SymlinkEntry) -> SymlinkEntry:
+        """
+        Returns SymlinkEntry provided using `symlink` with updated value fetched from Onedata
+
+        In order this function to work,
+        an actual user represented by token MUST HAVE rights to access SymlinkEntry with specified FileId
+
+        :param symlink: SymlinkEntry object representing the symbolic link vale of to be fetched
+        :return: SymlinkEntry with updated value (symlink value) fetched from Onedata
+        :raises AttributeError: if symbolic link value couldn't be fetched from Onedata or any related error
+        """
+        api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
+        # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/get_symlink_value
+
+        try:
+            api_response = api_instance.get_symlink_value(symlink.file_id)
+        except ApiException as e:
+            raise AttributeError("Error with getting symlink value from FileId") from e
+
+        symlink.value = api_response
+
+        return symlink
 
     def new_entry(self, new_entry_request: NewEntryRequest) -> EntryRequest:
         """
