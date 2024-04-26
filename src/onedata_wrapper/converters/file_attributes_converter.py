@@ -5,6 +5,7 @@ from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.other_entry import OtherEntry
 from onedata_wrapper.models.filesystem.file_entry import FileEntry
+from onedata_wrapper.models.filesystem.symlink_entry import SymlinkEntry
 
 
 class FileAttributesConverter(AbstractConverter):
@@ -43,6 +44,8 @@ class FileAttributesConverter(AbstractConverter):
             entry = FileEntry(*common_attributes)
         elif file_attributes.type == "DIR":
             entry = DirEntry(None, *common_attributes)
+        elif file_attributes.type == "SYMLNK":
+            entry = SymlinkEntry(None, *common_attributes)
         else:
             entry = OtherEntry(file_attributes.type, *common_attributes)
 
