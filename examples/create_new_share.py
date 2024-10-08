@@ -3,6 +3,7 @@ This file provides a basic example how to use ShareApi when creating new shares
 """
 
 import oneprovider_client
+
 from onedata_wrapper.api.share_api import ShareApi
 from onedata_wrapper.models.filesystem.entry_request import EntryRequest
 from onedata_wrapper.models.share.new_share_request import NewShareRequest
@@ -27,5 +28,8 @@ if __name__ == "__main__":
     # requesting creation of the new share from Onedata -> returns ShareRequest latter usable
     new_share_request = share_api.new_share(share)
 
-    # returned share request can be used to return share_id
-    print(new_share_request.share_id)
+    # returned share request can be used to fetch the data about newly created share
+    new_share = share_api.get_share(new_share_request)
+
+    # printing information using __iter__ function returning dict
+    print(dict(new_share))

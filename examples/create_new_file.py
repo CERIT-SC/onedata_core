@@ -3,7 +3,9 @@ This file provides a basic example how to use FileOperationsApi when creating ne
 """
 
 import oneprovider_client
+
 from onedata_wrapper.api.file_operations_api import FileOperationsApi
+from onedata_wrapper.api.share_api import ShareApi
 from onedata_wrapper.models.filesystem.entry_request import EntryRequest
 from onedata_wrapper.models.filesystem.new_file_request import NewFileRequest
 from onedata_wrapper.selectors.file_attribute import ALL as FA_ALL
@@ -37,3 +39,8 @@ if __name__ == "__main__":
 
     # printing information using __iter__ function returning dict
     print(dict(new_file))
+
+    # if the file info was fetched using FA_SHARES (FileAttributes.SHARES), we can fetch more data about all the shares
+    # using the ShareApi (more info in ./create_new_share.py)
+    share_api = ShareApi(oneprovider_configuration)
+    share_api.fetch_shares(new_file)
