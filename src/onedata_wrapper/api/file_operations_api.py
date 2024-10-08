@@ -1,12 +1,17 @@
+from typing import Union
+
 from oneprovider_client.configuration import Configuration as OneproviderConfiguration
+import oneprovider_client
+from oneprovider_client.rest import ApiException
+
+from onedata_wrapper.api import oneprovider_api
+from onedata_wrapper.api.oneprovider_api import OneproviderApi
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 from onedata_wrapper.models.filesystem.entry_request import EntryRequest
 from onedata_wrapper.models.filesystem.new_entry_request import NewEntryRequest
 from onedata_wrapper.models.filesystem.symlink_entry import SymlinkEntry
 from onedata_wrapper.models.space.space import Space
-import oneprovider_client
-from oneprovider_client.rest import ApiException
 from onedata_wrapper.converters.directory_children_converter import DirectoryChildrenConverter
 from onedata_wrapper.converters.file_attributes_converter import FileAttributesConverter
 from onedata_wrapper.selectors.file_attribute import FileAttribute as FA
