@@ -39,6 +39,7 @@ class ShareApi(object):
         parameters = new_share_request.request_attrs()
 
         api_instance = oneprovider_client.ShareApi(oneprovider_client.ApiClient(self._configuration))
+        # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/create_share
 
         new_share = ShareCreateRequest(**parameters)
 

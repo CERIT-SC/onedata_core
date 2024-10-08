@@ -145,6 +145,7 @@ class FileOperationsApi(object):
         parameters = new_entry_request.request_attrs()
 
         api_instance = oneprovider_client.BasicFileOperationsApi(oneprovider_client.ApiClient(self._configuration))
+        # https://onedata.org/#/home/api/stable/oneprovider?anchor=operation/create_file
 
         # octet-stream expects body, but when working with directories, no body is provided
         # because of that, we simulate that there is some body
