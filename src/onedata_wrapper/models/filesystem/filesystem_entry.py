@@ -2,6 +2,9 @@ import datetime
 from typing import Optional
 from abc import ABC
 
+from onedata_wrapper.models.share.share import Share
+from onedata_wrapper.models.share.share_request import ShareRequest
+
 
 class FilesystemEntry(ABC):
     """
@@ -34,7 +37,7 @@ class FilesystemEntry(ABC):
         self._storage_user_id: Optional[str] = None
         self._storage_group_id: Optional[str] = None
 
-        self._shares: Optional[list[str]] = None
+        self._shares: Optional[list[ShareRequest]] = None
 
         self._index: Optional[str] = None
 
@@ -141,6 +144,26 @@ class FilesystemEntry(ABC):
     @property
     def shares(self):
         return self._shares
+
+    @shares.setter
+    def shares(self, value: list[Share]):
+        """Sets Share objects to actual FilesystemEntry instead of previous ShareRequests
+        :raises ValueError: if Share objects are not in the correct format (list of a Share type
+            with the same share ids)"""
+        if not isinstance(self.shares, list):
+            raise AttributeError("There were no shares at the object creation")
+
+        if not isinstance(value, list):
+            raise ValueError("Shares to set are not list")
+
+        for share_new, share_old in zip(value, self.shares):
+            if not isinstance(share_new, Share):
+                raise ValueError("Share in the list is not a Share type")
+
+            if share_new.share_id != share_old.share_id:
+                raise ValueError("Share in the list does not correspond to the previous values")
+
+        self._shares = value
 
     @property
     def index(self):
