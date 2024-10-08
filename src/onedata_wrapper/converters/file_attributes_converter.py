@@ -1,11 +1,14 @@
 from datetime import datetime
+
 from oneprovider_client.models.file_attributes import FileAttributes
+
 from onedata_wrapper.converters.abstract_converter import AbstractConverter
 from onedata_wrapper.models.filesystem.filesystem_entry import FilesystemEntry
 from onedata_wrapper.models.filesystem.dir_entry import DirEntry
 from onedata_wrapper.models.filesystem.other_entry import OtherEntry
 from onedata_wrapper.models.filesystem.file_entry import FileEntry
 from onedata_wrapper.models.filesystem.symlink_entry import SymlinkEntry
+from onedata_wrapper.models.share.share_request import ShareRequest
 
 
 class FileAttributesConverter(AbstractConverter):
@@ -21,6 +24,13 @@ class FileAttributesConverter(AbstractConverter):
             entry_mtime = datetime.fromtimestamp(file_attributes.mtime)
         if file_attributes.ctime is not None:
             entry_ctime = datetime.fromtimestamp(file_attributes.ctime)
+
+        entry_shares = None
+        if file_attributes.shares is not None:
+            entry_shares = []
+            for share in file_attributes.shares:
+                entry_shares.append(ShareRequest(share_id=share))
+
         # unchanged
         entry_name = file_attributes.name
         entry_mode = file_attributes.mode
@@ -32,7 +42,6 @@ class FileAttributesConverter(AbstractConverter):
         entry_provider_id = file_attributes.provider_id
         entry_storage_user_id = file_attributes.storage_user_id
         entry_storage_group_id = file_attributes.storage_group_id
-        entry_shares = file_attributes.shares
         entry_index = file_attributes.index
 
         common_attributes = (entry_name, entry_file_id, entry_mode, entry_size, entry_hardlinks,
